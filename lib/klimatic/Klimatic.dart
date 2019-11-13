@@ -11,6 +11,12 @@ class Klimatic extends StatefulWidget {
 }
 
 class _KlimaticState extends State<Klimatic> {
+
+  void showStaff() async {
+    Map data = await  getWeather(util.apiId, util.defaultCity);
+    print(data.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -21,7 +27,7 @@ class _KlimaticState extends State<Klimatic> {
         actions: <Widget>[
           new IconButton(
               icon: new Icon(Icons.menu),
-              onPressed: ()=>{debugPrint("hey")}
+              onPressed: showStaff
               ),
         ],
       ),
@@ -52,7 +58,8 @@ class _KlimaticState extends State<Klimatic> {
   }
 }
 Future<Map> getWeather(String apiId , String city) async{
-  String apiUrl = "https://samples.openweathermap.org/data/2.5/weather?q=$city&appid=''${util.apiId}&utils=imperial";
+  String apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=${util.apiId}&utils=imperial";
+                  //'http://api.openweathermap.org/data/2.5/weather?q=$city&appid=''${util.appId}&units=imperial';
 
   http.Response response = await http.get(apiUrl);
 
