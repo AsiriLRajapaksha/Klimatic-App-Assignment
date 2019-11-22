@@ -91,7 +91,16 @@ Widget updateTempWidget(String city){
               children: <Widget>[
                 new ListTile(
                   title: new Text(content['main']['temp'].toString(),
-                      style: new TextStyle(color: Colors.white , fontSize: 50.0 , fontWeight: FontWeight.w500)),
+                      style: new TextStyle(color: Colors.white , fontSize: 50.0 , fontWeight: FontWeight.w500)
+                  ),
+                  subtitle: new ListTile(
+                    title: new Text(
+                      "Humidity : ${content['main']['humidity'].toString()}\n"
+                           "Min : ${content['main']['temp_min'].toString()}\n"
+                           "Max : ${content['main']['temp_max'].toString()}\n",
+                      style: extraData(),
+                    ),
+                  ),
                 )
               ],
             ),
@@ -149,5 +158,13 @@ class ChangeCity extends StatelessWidget {
       ),
     );
   }
+}
+
+TextStyle extraData(){
+  return new TextStyle(
+    color: Colors.white70,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.w500,
+  );
 }
 
