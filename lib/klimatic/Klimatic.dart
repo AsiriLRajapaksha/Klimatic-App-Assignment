@@ -12,6 +12,14 @@ class Klimatic extends StatefulWidget {
 
 class _KlimaticState extends State<Klimatic> {
 
+  Future _goToNextScreen(BuildContext context) async{
+    Map result = await Navigator.of(context).push(
+      new MaterialPageRoute(builder: (BuildContext context){
+        return new ChangeCity();
+      })
+    );
+  }
+
   void showStaff() async {
     Map data = await  getWeather(util.apiId, util.defaultCity);
     print(data.toString());
@@ -27,7 +35,7 @@ class _KlimaticState extends State<Klimatic> {
         actions: <Widget>[
           new IconButton(
               icon: new Icon(Icons.menu),
-              onPressed: showStaff
+              onPressed: () {_goToNextScreen(context);}
               ),
         ],
       ),
@@ -50,7 +58,9 @@ class _KlimaticState extends State<Klimatic> {
           ),
           new Container(
             margin: const EdgeInsets.fromLTRB(20.0, 450.0, 0.0, 0.0),
-            child : new Text("67.5F" , style: new TextStyle(color: Colors.white , fontSize: 50.0 , fontWeight: FontWeight.w500),),
+//            child : new Text("" , style: new TextStyle(color: Colors.white , fontSize: 50.0 , fontWeight: FontWeight.w500)
+//            ,),
+          child: updateTempWidget("Beira"),
           )
         ],
       ),
@@ -64,5 +74,49 @@ Future<Map> getWeather(String apiId , String city) async{
   http.Response response = await http.get(apiUrl);
 
   return json.decode(response.body);
+}
+
+Widget updateTempWidget(String city){
+  return new FutureBuilder(
+      future: getWeather(util.apiId, city),
+      builder: (BuildContext context, AsyncSnapshot <Map> snapshot){
+        if(snapshot.hasData){
+          Map content = snapshot.data;
+          return new Container(
+            child : new Column(
+              children: <Widget>[
+                new ListTile(
+                  title: new Text(content['main']['temp'].toString(),
+                      style: new TextStyle(color: Colors.white , fontSize: 50.0 , fontWeight: FontWeight.w500)),
+                )
+              ],
+            ),
+          );
+        }
+      });
+}
+
+class ChangeCity extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        backgroundColor: Colors.red,
+        title: new Text("Change City"),
+        centerTitle: true,
+      ),
+      body: new Stack(
+        children: <Widget>[
+          new Center(
+            child: new Image.asset('images/white_snow.png',
+                   width: 490.0,
+                   height: 1200.0 ,
+                   fit: BoxFit.fill,
+            )
+          )
+        ],
+      ),
+    );
+  }
 }
 
