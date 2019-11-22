@@ -11,6 +11,7 @@ class Klimatic extends StatefulWidget {
 }
 
 class _KlimaticState extends State<Klimatic> {
+  var _cityEntered ;
 
   Future _goToNextScreen(BuildContext context) async{
     Map result = await Navigator.of(context).push(
@@ -18,6 +19,9 @@ class _KlimaticState extends State<Klimatic> {
         return new ChangeCity();
       })
     );
+    if(result != null && result.containsKey("city")){
+      _cityEntered = result['city'].toString();
+    }
   }
 
   void showStaff() async {
@@ -50,7 +54,7 @@ class _KlimaticState extends State<Klimatic> {
           new Container(
             alignment: Alignment.topRight,
             margin: const EdgeInsets.fromLTRB(0.0, 10.9, 20.0, 0.0),
-            child: new Text("Spokane" , style : new TextStyle(color: Colors.white , fontSize: 23.0 , fontStyle: FontStyle.italic)),
+            child: new Text("${_cityEntered == null ? util.defaultCity : _cityEntered}" , style : new TextStyle(color: Colors.white , fontSize: 23.0 , fontStyle: FontStyle.italic)),
           ),
           new Container(
             alignment: Alignment.center,
@@ -60,7 +64,7 @@ class _KlimaticState extends State<Klimatic> {
             margin: const EdgeInsets.fromLTRB(20.0, 450.0, 0.0, 0.0),
 //            child : new Text("" , style: new TextStyle(color: Colors.white , fontSize: 50.0 , fontWeight: FontWeight.w500)
 //            ,),
-          child: updateTempWidget("Beira"),
+          child: updateTempWidget(_cityEntered),
           )
         ],
       ),
@@ -78,7 +82,7 @@ Future<Map> getWeather(String apiId , String city) async{
 
 Widget updateTempWidget(String city){
   return new FutureBuilder(
-      future: getWeather(util.apiId, city),
+      future: getWeather(util.apiId, city == null ? 'Spokane' : city),
       builder: (BuildContext context, AsyncSnapshot <Map> snapshot){
         if(snapshot.hasData){
           Map content = snapshot.data;
@@ -97,6 +101,8 @@ Widget updateTempWidget(String city){
 }
 
 class ChangeCity extends StatelessWidget {
+  var _cityFieldController = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -113,6 +119,31 @@ class ChangeCity extends StatelessWidget {
                    height: 1200.0 ,
                    fit: BoxFit.fill,
             )
+          ),
+          new ListView(
+            children: <Widget>[
+              new ListTile(
+                title: new TextField(
+                  decoration: new InputDecoration(
+                    hintText: "Enter City",
+                  ),
+                  controller: _cityFieldController,
+                  keyboardType: TextInputType.text,
+                ),
+              ),
+              new ListTile(
+                title: new FlatButton(
+                    onPressed: (){
+                      Navigator.pop(context, {
+                        'city' : _cityFieldController.text
+                      });
+                    },
+                    textColor: Colors.white70,
+                    color: Colors.redAccent,
+                    child: new Text("Get Wether")
+                ),
+              )
+            ],
           )
         ],
       ),
